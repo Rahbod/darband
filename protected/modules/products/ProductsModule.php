@@ -1,0 +1,34 @@
+<?php
+
+class ProductsModule extends CWebModule
+{
+	public function init()
+	{
+		// this method is called when the module is being created
+		// you may place code here to customize the module or the application
+
+		// import the module-level models and components
+		$this->setImport(array(
+			'products.models.*',
+			'products.components.*',
+		));
+	}
+
+	public $controllerMap = array(
+		'manage' => 'products.controllers.ProductsManageController',
+		'categories' => 'products.controllers.ProductsCategoriesController',
+		'public' => 'products.controllers.ProductsPublicController',
+	);
+
+	public function beforeControllerAction($controller, $action)
+	{
+		if(parent::beforeControllerAction($controller, $action))
+		{
+			// this method is called before any module controller action is performed
+			// you may place customized code here
+			return true;
+		}
+		else
+			return false;
+	}
+}
