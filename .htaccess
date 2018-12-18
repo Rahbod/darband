@@ -5,8 +5,8 @@ Options -Indexes
 RewriteEngine on
 RewriteRule ^index\.html$ / [NC,R,L]
 
-#RewriteCond %{HTTP_HOST} ^punicastone\.com$
-#RewriteRule ^/?$ "http\:\/\/www.punicastone\.com" [R=301,L]
+RewriteCond %{HTTP_HOST} ^darband\.com\.au$
+RewriteRule ^/?$ "http\:\/\/www.darband\.com\.au" [R=301,L]
 # if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
