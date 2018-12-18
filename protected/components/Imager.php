@@ -9,7 +9,6 @@ class Imager
 
         if ($outputDirection == null)
             $outputDirection = $imagePath;
-
         if ($faceDetection) {
             $imagePath = $this->resize($imagePath, $outputDirection, $width, $height);
             $detector = new FaceDetector('detection.dat');
