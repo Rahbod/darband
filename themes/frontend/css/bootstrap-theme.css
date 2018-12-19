@@ -35,6 +35,41 @@ a {
     background: #e12828;
     color: #FFF;
 }
+.pdf-page ::selection ,
+.pdf-page ::moz-selection {
+    background: #e12828;
+    color: #1d1d1d;
+}
+.pdf-page{
+    color: #1d1d1d;
+    padding: 30px;
+    font-family: "Open Sans";
+}
+.pdf-page .menu-list .head{
+    margin: 30px 0 15px;
+    display: block;
+    overflow: hidden;
+}
+.pdf-page .menu-list .head> h2{
+    position: relative;
+    display: inline-block;
+    padding: 8px 15px 8px 0;
+    text-align: left;
+    font-weight: bold;
+}
+.pdf-page .menu-list .head> h2:before{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 10px;
+    background: #e12828;
+}
+.pdf-page .menu-item{
+    margin: 0 8% 15px 0;
+}
 a,
 a:hover,
 a:focus,

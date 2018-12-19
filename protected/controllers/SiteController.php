@@ -119,6 +119,8 @@ class SiteController extends Controller
 
     public function actionMenu()
     {
+        Yii::app()->theme = 'frontend';
+        $this->layout = '//layouts/public';
         $this->pageTitle = 'Download Darband Menu';
         $this->keywords = 'Darband Menu, darband, menu file, menu, foods, foods menu';
         $pdf = SiteSetting::getOption('menu_pdf');
@@ -127,5 +129,27 @@ class SiteController extends Controller
         if ($pdf && is_file($path . $pdf))
             $this->redirect($url . $pdf);
         throw new HttpException("Sorry! File not found.", 404);
+    }
+
+    public function actionMenuPdf()
+    {
+        Yii::app()->theme = 'frontend';
+        $this->layout = '//layouts/xx';
+        $categories=ProductCategories::model()->findAll();
+//        $this->renderPartial('products.views.manage.menu_pdf', compact('categories'));
+//        exit;
+        /** @var $html2pdf HTML2PDF */
+        $html2pdf = Yii::app()->ePdf->HTML2PDF();
+        $html2pdf->WriteHTML($this->renderPartial('products.views.manage.menu_pdf', compact('categories'), true));
+//        $html2pdf->writeHTML($this->renderPartial('products.views.manage.menu_pdf', compact('categories'), true));
+        $html2pdf->Output();
+//        $this->pageTitle = 'Download Darband Menu';
+//        $this->keywords = 'Darband Menu, darband, menu file, menu, foods, foods menu';
+//        $pdf = SiteSetting::getOption('menu_pdf');
+//        $path = Yii::getPathOfAlias('webroot') . '/uploads/setting/';
+//        $url = Yii::app()->getBaseUrl(true) . '/uploads/setting/';
+//        if ($pdf && is_file($path . $pdf))
+//            $this->redirect($url . $pdf);
+//        throw new HttpException("Sorry! File not found.", 404);
     }
 }
